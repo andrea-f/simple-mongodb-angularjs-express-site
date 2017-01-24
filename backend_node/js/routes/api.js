@@ -42,10 +42,11 @@ router.post('/bikes/get/', isLoggedIn, function(req, res, next) {
 router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
 	console.log("Add bike! ");
 	// TODO: Validate input data!
-	console.log(req.body);
+	// console.log(req.body);
 	// TODO: Make bike_hash a MD5 hash, or maybe check by name
+	var opts = { runValidators: true };
 	var bike_hash = req.body.name;
-	Bike.findOne({hash: bike_hash}, function (err, bike) {
+	Bike.findOne({hash: bike_hash}, opts, function (err, bike) {
 		if(!err) {
 			new Bike({
 				name         : req.body.name, 
@@ -55,11 +56,19 @@ router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
 				image        : req.body.image
 			})
 			.save(function(err, bike) {
+				console.log(err)
+				console.log(bike)
 				res.json({
 					bike: bike
 				});
 			});
+		} else {
+			console.log(err)
+			res.json({
+				"error": err
+			});			
 		}
+
 	});
 });
 
@@ -94,7 +103,7 @@ router.post('/bikes/update/', isLoggedIn, function(req, res, next) {
 	// TODO:
 	// Check which fields are in post request and are valid, then update
 	// Currently only updates name
-	Bike.findByIdAndUpdate(bike_id, { name: new_name }, { new: true }, function(err, resp) {
+	Bike.findByIdAndUpdate(bike_id, { name: new_name }, { new: true, runValidators: true }, function(err, resp) {
 		if (err) {
 			res.json({
 				error: "Error in updating bike id: " + bike_id

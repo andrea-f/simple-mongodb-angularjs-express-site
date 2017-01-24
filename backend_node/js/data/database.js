@@ -1,17 +1,7 @@
 var mongoose = require('mongoose');
-var bcrypt   = require('bcrypt-nodejs');
 var Schema   = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
-
-var Bike = new Schema({
-    name: String,
-    image: {
-    	thumb: String,
-    	large: String
-    },
-    description: String,
-    class: Array
-});
+var bcrypt   = require('bcrypt-nodejs');
 
 var User = new Schema({
     local: {
@@ -19,6 +9,78 @@ var User = new Schema({
         password: String
     }
 });
+
+var Bike = new Schema({
+    name: {
+        type: String,
+        required: true,
+        validate: {
+            validator: function(v) {
+            	console.log('in validator')
+            	console.log(typeof v)
+                if ( (typeof v === "string") && (v.length > 0) ) { 
+                	console.log(v)
+                	return true; 
+                } else { 
+                	return false; 
+                };
+                
+            },
+            message: '{VALUE} is not a valid name!'
+        }
+    },
+    image: {
+    	thumb: {
+            type: String,
+            required: true,
+            validate: {
+                validator: function(v) {
+                    // Add better checking here
+                    ( (Object.prototype.toString.call(v) === "[object String]") && (v.length > 0) ) ? isValid = true : isValid = false;
+                    return isValid;
+                },
+                message: '{VALUE} is not a valid thumb image!'
+            }
+        },
+        large: {
+            type: String,
+            required: true,
+            validate: {
+                validator: function(v) {
+                    // Add better checking here
+                    ( (Object.prototype.toString.call(v) === "[object String]") && (v.length > 0) ) ? isValid = true : isValid = false;
+                    return isValid;
+                },
+                message: '{VALUE} is not a valid large image!'
+            }
+        }	
+    },
+    description: {
+        type: String,
+        required: true,
+        validate: {
+            validator: function(v) {
+                ( (Object.prototype.toString.call(v) === "[object String]") && (v.length > 0) ) ? isValid = true : isValid = false;
+                return isValid;
+            },
+            message: '{VALUE} is not a valid description!'
+        }
+    },
+    class: {
+        type: Array,
+        required: true,
+        validate: {
+            validator: function(v) {
+            	( (Object.prototype.toString.call(v) === "[object Array]") && (v.length > 0) ) ? isValid = true: isValid = false;
+                return isValid;
+            },
+            message: '{VALUE} is not a valid class!'
+        }
+    }
+});
+
+
+
 
 // generating a hash
 User.methods.generateHash = function(password) {
@@ -32,6 +94,5 @@ User.methods.validPassword = function(password) {
 
 
 module.exports = {
-	"user": mongoose.model('user', User),
 	"bike": mongoose.model('bike', Bike)
 };
