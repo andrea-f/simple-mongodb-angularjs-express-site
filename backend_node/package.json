@@ -4,8 +4,8 @@
   "description": "A simple bike storage project",
   "main": "app.js",
   "scripts": {
-    "test": "npm test",
-    "start": "node ./js/bin/www"
+    "start": "nodemon --watch ./js ./js/bin/www",
+    "test": "./node_modules/.bin/mocha --reporter spec ./test/api"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "mocha": "^3.2.0",
     "mongoose": "^4.7.8",
     "morgan": "^1.7.0",
+    "nodemon": "^1.11.0",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "sinon": "^1.17.7",
