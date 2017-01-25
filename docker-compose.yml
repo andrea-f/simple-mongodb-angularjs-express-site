@@ -12,3 +12,10 @@ backend:
     - "27017:27017"
   links:
     - db
+frontend:
+  build: .
+  dockerfile: ./frontend/Dockerfile
+  volumes:
+    - .:/frontend
+  ports:
+    - "80:80"
