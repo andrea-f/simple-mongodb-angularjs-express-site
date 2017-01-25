@@ -11,15 +11,13 @@ var User = new Schema({
 });
 
 var Bike = new Schema({
+	image_base64: {type: String},
     name: {
         type: String,
         required: true,
         validate: {
             validator: function(v) {
-            	console.log('in validator')
-            	console.log(typeof v)
                 if ( (typeof v === "string") && (v.length > 0) ) { 
-                	console.log(v)
                 	return true; 
                 } else { 
                 	return false; 

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
+var fs = require('fs');
 /*
  * Get all bikes 
  */
@@ -52,7 +52,8 @@ router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
 				description  : req.body.description, 
 				hash         : bike_hash,
 				class        : req.body.class,
-				image        : req.body.image
+				image        : req.body.image, 
+				image_base64 : encode_image(req.body.image.large)
 			})
 			.save(function(err, bike) {
 				console.log(err)
@@ -133,5 +134,9 @@ function isLoggedIn(req, res, next) {
 	return next();
 }
 
+function encode_image(url) {
+    var image = fs.readFileSync(url);
+    return new Buffer(image).toString('base64');
+}
 
 module.exports = router;
