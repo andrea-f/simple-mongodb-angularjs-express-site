@@ -5,7 +5,9 @@ var router = express.Router();
  * Get all bikes 
  */
 router.post('/bikes', isLoggedIn, function(req, res, next) {
-	Bike.find({}, null, {sort:{name:1}}, function(err, bikes){
+	var sort_by;
+	(typeof req.body.sort_by === 'undefined') ? sort_by = {name:1} : sort_by = req.body.sort_by
+	Bike.find({}, null, {sort: sort_by}, function(err, bikes){
 		res.json({
 			bikes: bikes
 		});
@@ -40,11 +42,8 @@ router.post('/bikes/get/', isLoggedIn, function(req, res, next) {
  * Add a bike 
  */
 router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
-	console.log("Add bike! ");
-	// TODO: Validate input data!
-	// console.log(req.body);
-	// TODO: Make bike_hash a MD5 hash, or maybe check by name
 	var opts = { runValidators: true };
+	// TODO: Make bike_hash a MD5 hash, or maybe check by name
 	var bike_hash = req.body.name;
 	Bike.findOne({hash: bike_hash}, opts, function (err, bike) {
 		if(!err) {
@@ -57,10 +56,14 @@ router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
 			})
 			.save(function(err, bike) {
 				console.log(err)
-				console.log(bike)
-				res.json({
-					bike: bike
-				});
+				if (err) {
+					res.json(err);
+				} else {
+					console.log(bike)
+					res.json({
+						bike: bike
+					});
+				}
 			});
 		} else {
 			console.log(err)
