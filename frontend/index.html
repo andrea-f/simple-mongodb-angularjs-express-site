@@ -1,0 +1,41 @@
+<html ng-app>
+    <head>
+        <title>Bikes service</title>
+        <meta name="viewport" content="width=device-width, initial-scale=0.8">
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.1.1/gh-fork-ribbon.min.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
+        <script src="app-controller.js"></script>
+    </head>
+<bodyid="app" class="viewport">
+<div class="container-fluid">
+    <section id="view" class="text-center">
+        <div class="col-md-12" style="padding-top: 2%; display:block;">
+            <form ng-controller='appController' ng-submit="send()">
+                <input type="submit" ngClick="Submit" value="Get bikes" class="btn btn-lg btn-success">
+            <ng-form>
+            <table ng-controller="appController" class="table table-striped">
+                <thead>
+                    <tr style="width:100%">
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Class</th>
+                        <th>Image</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="bike in bikes_data" style="width:100%">
+                        <td>{{bike.name}}</td>
+                        <td>{{bike.description}}</td>
+                        <td><div ng-repeat="c in bike.class">{{c}}</div></td>
+                        <td><a href={{bike.image.large}} target="_blank"><img src={{bike.image.thumb}} class="img-responsive" /></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+</body>
+ 
+</html>
