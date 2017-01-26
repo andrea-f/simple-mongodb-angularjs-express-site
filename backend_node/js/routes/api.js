@@ -45,6 +45,7 @@ router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
 	var opts = { runValidators: true };
 	// TODO: Make bike_hash a MD5 hash, or maybe check by name
 	var bike_hash = req.body.name;
+	//console.log(req.body)
 	Bike.findOne({hash: bike_hash}, opts, function (err, bike) {
 		if(!err) {
 			new Bike({
@@ -52,12 +53,14 @@ router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
 				description  : req.body.description, 
 				hash         : bike_hash,
 				class        : req.body.class,
-				image        : req.body.image, 
-				image_base64 : encode_image(req.body.image.large)
+				image        : req.body.image//, 
+				//image_base64 : encode_image(req.body.image.large)
 			})
 			.save(function(err, bike) {
+
 				console.log(err)
 				if (err) {
+					res.status = 500;
 					res.json(err);
 				} else {
 					console.log(bike)
@@ -68,6 +71,7 @@ router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
 			});
 		} else {
 			console.log(err)
+			res.status = 500;
 			res.json({
 				"error": err
 			});			
@@ -109,6 +113,7 @@ router.post('/bikes/update/', isLoggedIn, function(req, res, next) {
 	// Currently only updates name
 	Bike.findByIdAndUpdate(bike_id, { name: new_name }, { new: true, runValidators: true }, function(err, resp) {
 		if (err) {
+			res.status = 500;
 			res.json({
 				error: "Error in updating bike id: " + bike_id
 			});
