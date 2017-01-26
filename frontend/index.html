@@ -1,4 +1,4 @@
-<html ng-app>
+<html ng-app="appModule">
     <head>
         <title>Bikes service</title>
         <meta name="viewport" content="width=device-width, initial-scale=0.8">
@@ -11,10 +11,48 @@
 <bodyid="app" class="viewport">
 <div class="container-fluid">
     <section id="view" class="text-center">
-        <div class="col-md-12" style="padding-top: 2%; display:block;">
-            <form ng-controller='appController' ng-submit="send()">
-                <input type="submit" ngClick="Submit" value="Get bikes" class="btn btn-lg btn-success">
-            <ng-form>
+        <div ng-controller='appController' class="col-md-12" style="padding-top: 2%; display:block;">
+            
+            <button type="submit" ng-click="send()" style="display: infline;" class="btn btn-lg btn-success">Get bikes</button>
+            <button type="submit" ng-click="show = !show" style="display: infline;" class="btn btn-lg btn-info">Add bike</button>
+            <div ng-show="show" style="display: block; text-align: center;">
+                <form ng-controller='appController' ng-submit="submitForm()"  class="form-group" style="padding: 2%;">
+                   <!-- <div class="form-inline">-->
+                        <!-- <textarea ng-model='data.textdata'></textarea> -->
+                        <!--<pre>{{data.textdata}}</pre> -->
+                        <div class="form-group row">
+                            <label for="name" class="col-sm-2 col-form-label col-form-label-lg">Bike name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" ng-model='data.name' id="name" placeholder="Bike name">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="description" class="col-sm-2 col-form-label col-form-label-lg">Description</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" ng-model='data.description' id="description" placeholder="Bike description">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="class" class="col-sm-2 col-form-label col-form-label-lg">Bike classes</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" ng-model='data.class' id="class" placeholder="Bike classes">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="image" class="col-sm-2 col-form-label col-form-label-lg">Bike image</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" ng-model='data.image' id="image" placeholder="Bike image">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-2">
+                            <input type="submit" ngClick="Submit" value="Add" class="btn btn-md btn-success form-control">
+                            </div>
+                            <pre>{{add_result}}</pre>
+                        </div>
+                <ng-form>
+
+            </div>
             <table ng-controller="appController" class="table table-striped">
                 <thead>
                     <tr style="width:100%">
