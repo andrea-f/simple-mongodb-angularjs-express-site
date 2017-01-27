@@ -6,7 +6,19 @@ var fs = require('fs');
  */
 router.post('/bikes', isLoggedIn, function(req, res, next) {
 	var sort_by;
-	(typeof req.body.sort_by === 'undefined') ? sort_by = {name:1} : sort_by = req.body.sort_by
+ 
+		switch(req.body.sort_by) {
+			case "description":
+				sort_by = {description:1} 
+				break;
+			case "name":
+			default:
+				sort_by = {name:1} 
+				break;
+		}
+
+	
+	console.log(sort_by)
 	Bike.find({}, null, {sort: sort_by}, function(err, bikes){
 		res.json({
 			bikes: bikes
@@ -42,61 +54,67 @@ router.post('/bikes/get/', isLoggedIn, function(req, res, next) {
  * Add a bike 
  */
 router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
-	var opts = { runValidators: true };
-	// TODO: Make bike_hash a MD5 hash, or maybe check by name
-	var bike_hash = req.body.name;
-	//console.log(req.body)
-	Bike.findOne({hash: bike_hash}, opts, function (err, bike) {
-		if(!err) {
-			new Bike({
-				name         : req.body.name, 
-				description  : req.body.description, 
-				hash         : bike_hash,
-				class        : req.body.class,
-				image        : req.body.image//, 
-				//image_base64 : encode_image(req.body.image.large)
-			})
-			.save(function(err, bike) {
+	var opts = { runValidators: true },
+		count = 0;
+	for (var key in req.body) {
+		count += 1;
+	}
+	if (count === 0) {
+		res.json({
+			"errors": {}, 
+			"message":"No input submitted!"
+		});
+	} else {
+		var bike_hash = req.body.name;
+		Bike.findOne({hash: bike_hash}, opts, function (err, bike) {
+			if(!err) {
+				new Bike({
+					name         : req.body.name, 
+					description  : req.body.description, 
+					hash         : bike_hash,
+					class        : req.body.class.split(','),
+					image        : req.body.image//, 
+					//image_base64 : encode_image(req.body.image.large)
+				})
+				.save(function(err, bike) {
 
+					console.log(err)
+					if (err) {
+						res.status = 500;
+						res.json(err);
+					} else {
+						console.log(bike)
+						res.json({
+							bike: bike
+						});
+					}
+				});
+			} else {
 				console.log(err)
-				if (err) {
-					res.status = 500;
-					res.json(err);
-				} else {
-					console.log(bike)
-					res.json({
-						bike: bike
-					});
-				}
-			});
-		} else {
-			console.log(err)
-			res.status = 500;
-			res.json({
-				"error": err
-			});			
-		}
+				res.status = 500;
+				res.json({
+					"errors": err
+				});			
+			}
 
-	});
+		});
+	}
 });
 
 /*
  * Delete a bike by bike ID
  */
 router.post('/bikes/delete/', isLoggedIn, function(req, res, next) {
-	var bike_id = new ObjectID(req.body.bikeId);
-	// TODO: Validate input data
-	console.log("Bike to remove: "+bike_id)
-	Bike.findByIdAndRemove(bike_id, function(err, resp) {
+	Bike.findByIdAndRemove(req.body.id, function(err, resp) {
 		if (resp) {
 			console.log("Removed bike: "+ resp.name)
 			res.json({
-				response: "Removed bike with id: " + resp.name
+				response: "Removed bike with name: " + resp.name
 			});
 		} else {
-			console.log("No such bike: " + bike_id)
+			console.log("No such bike: " + req.body.id)
 			res.json({
-				response: "No such bike: " + bike_id
+				response: "No such bike: " + req.body.id
 			});
 		}
 	});	
@@ -131,7 +149,6 @@ router.post('/bikes/update/', isLoggedIn, function(req, res, next) {
 			}
 		}
 	});	
-
 });
 
 // TODO: Add authentication

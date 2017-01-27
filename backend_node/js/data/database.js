@@ -51,7 +51,7 @@ var Bike = new Schema({
                 },
                 message: '{VALUE} is not a valid large image!'
             }
-        }	
+        }
     },
     description: {
         type: String,
