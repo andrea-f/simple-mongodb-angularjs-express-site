@@ -5,8 +5,9 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.1.1/gh-fork-ribbon.min.css" />
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
-        <script src="app-controller.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+        <script src="main.js"></script>
+        
     </head>
 <bodyid="app" class="viewport">
 <div class="container-fluid">
@@ -17,9 +18,6 @@
             <button type="submit" ng-click="show = !show" style="display: infline;" class="btn btn-lg btn-info">Add bike</button>
             <div ng-show="show" style="display: block; text-align: center;">
                 <form ng-controller='appController' ng-submit="submitForm()"  class="form-group" style="padding: 2%;">
-                   <!-- <div class="form-inline">-->
-                        <!-- <textarea ng-model='data.textdata'></textarea> -->
-                        <!--<pre>{{data.textdata}}</pre> -->
                         <div class="form-group row">
                             <label for="name" class="col-sm-2 col-form-label col-form-label-lg">Bike name</label>
                             <div class="col-sm-10">
@@ -39,7 +37,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="image" class="col-sm-2 col-form-label col-form-label-lg">Bike image</label>
+                            <label for="image" class="col-sm-2 col-form-label col-form-label-lg">Bike image URL</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" ng-model='data.image' id="image" placeholder="Bike image">
                             </div>
@@ -48,26 +46,39 @@
                             <div class="col-sm-2">
                             <input type="submit" ngClick="Submit" value="Add" class="btn btn-md btn-success form-control">
                             </div>
-                            <pre>{{add_result}}</pre>
+                            <pre id="result_box">{{add_result}}</pre>
                         </div>
                 <ng-form>
 
             </div>
-            <table ng-controller="appController" class="table table-striped">
+        
+            <table class="table table-striped" ng-show="show_table">
                 <thead>
                     <tr style="width:100%">
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Class</th>
+                        <th ng-click="send('name')">Name</th>
+                        <th ng-click="send('description')">Description</th>
+                        <th ng-click="send('class')">Class</th>
                         <th>Image</th>
+                        <th>Delete</th>
+                        <th>Update</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="bike in bikes_data" style="width:100%">
                         <td>{{bike.name}}</td>
                         <td>{{bike.description}}</td>
-                        <td><div ng-repeat="c in bike.class">{{c}}</div></td>
-                        <td><a href={{bike.image.large}} target="_blank"><img src={{bike.image.thumb}} class="img-responsive" /></a></td>
+                        <td>
+                            <div ng-repeat="c in bike.class">{{c}}</div>
+                        </td>
+                        <td>
+                            <a href={{bike.image.large}} target="_blank"><img src={{bike.image.thumb}} class="img-responsive" /></a>
+                        </td>
+                        <td>
+                            <button type="submit" ng-click="delete(bike._id)" style="display: infline;" class="btn btn-md btn-info">Delete bike</button>
+                        </td>
+                        <td>
+                            <button type="submit" ng-click="update(bike._id)" style="display: infline;" class="btn btn-md btn-info">Update bike</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
