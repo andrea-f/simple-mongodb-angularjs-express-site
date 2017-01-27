@@ -1,0 +1,30 @@
+<table class="table table-striped">
+    <thead>
+        <tr style="width:100%">
+<th ng-click="sendToParent('name')">Name</th>
+<th ng-click="sendToParent('description')">Description</th>
+<th ng-click="sendToParent('class')">Class</th>
+<th>Image</th>
+<th>Delete</th>
+<th>Update</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="bike in bikesData" style="width:100%">
+<td>{{bike.name}}</td>
+<td>{{bike.description}}</td>
+<td>
+    <div ng-repeat="c in bike.class">{{c}}</div>
+</td>
+<td>
+    <a href={{bike.image.large}} target="_blank"><img src={{bike.image.thumb}} class="img-responsive" /></a>
+</td>
+<td>
+    <button type="submit" ng-click="delete(bike._id)" style="display: infline;" class="btn btn-md btn-info">Delete bike</button>
+</td>
+<td>
+    <button type="submit" ng-click="update(bike._id)" style="display: infline;" class="btn btn-md btn-info">Update bike</button>
+</td>
+        </tr>
+    </tbody>
+</table>

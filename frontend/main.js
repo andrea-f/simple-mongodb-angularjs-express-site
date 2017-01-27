@@ -5,7 +5,7 @@ appModule.controller('appController', function($scope, $http) {
     $scope.send = function (sort_by) {
         console.log("inside click");
         var sort;
-        $scope.bikes_data = {};
+        
         $scope.show_table = false;
         (typeof sort_by === 'undefined') ? sort = {} : sort = {"sort_by": sort_by};
         console.log(sort)
@@ -22,11 +22,8 @@ appModule.controller('appController', function($scope, $http) {
             $scope.bikes_data = response.bikes;
         });
     }
-
-    $scope.data = {};
-
     $scope.submitForm = function () {
-        $scope.bikes_data = {};
+        //$scope.bikes_data = {};
         $scope.add_result = {};
         var user_obj = normaliseInput($scope.data),
             result_box = angular.element( document.querySelector( '#result_box' ) );
@@ -44,7 +41,7 @@ appModule.controller('appController', function($scope, $http) {
             } else {
                 $scope.add_result = "Saved bike: "+response.bike.name;
                 result_box.addClass('alert alert-success');
-                $scope.send();
+                $scope.$parent.send();
             }
         });
         posting.error(function(err, response){
@@ -53,31 +50,7 @@ appModule.controller('appController', function($scope, $http) {
         })
     };
 
-    $scope.delete = function(id){
-        console.log("submitted id: "+id)
 
-        var posting = $http({
-            method: 'POST',
-            url: 'http://localhost:3000/api/bikes/delete/',
-            data: {id:id},
-            withCredentials: false,
-            processData: false
-        })
-        posting.success(function (response) {
-            if (typeof response.errors !== "undefined") {
-                $scope.add_result = response.message;
-            } else {
-                $scope.add_result = "deleted bike: "+response;
-                console.log(response);
-                $scope.send();
-            }
-        });
-        posting.error(function(err, response){
-            console.log("ciao")
-            $scope.add_result = "eee: "+err.message;
-        })
-
-    }
 });
 
 
