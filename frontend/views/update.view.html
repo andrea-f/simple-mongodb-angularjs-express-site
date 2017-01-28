@@ -1,0 +1,36 @@
+<div id='updateArea'>
+<button type="submit" ng-click="show_update = !show_update" style="display: infline;" class="btn btn-md btn-info">Update</button>
+<form ng-submit="submitParentForm()"  class="form-group" style="padding: 2%;" ng-show="show_update">
+		<input type="hidden" name='id' data-ng-value="data.id = bike._id" value="{{bike._id}}">
+        <div class="form-group row">
+            <label for="name" class="col-sm-5 col-form-label col-form-label-lg">Bike name</label>
+            <div class="col-sm-10">
+				<input type="text" class="form-control" ng-model='data.name' id="name">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="description" class="col-sm-5 col-form-label col-form-label-lg">Description</label>
+            <div class="col-sm-10">
+				<input type="text" class="form-control" ng-model='data.description' id="description" value="{{bike.description}}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="class" class="col-sm-5 col-form-label col-form-label-lg">Bike classes</label>
+            <div class="col-sm-10">
+				<input type="text" class="form-control" ng-model='data.class' id="class" value="{{bike.class}}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="image" class="col-sm-5 col-form-label col-form-label-lg">Bike image URL</label>
+            <div class="col-sm-10">
+				<input type="text" class="form-control" ng-model='data.image' id="image" value="{{bike.image.large}}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-5">
+            	<input type="submit" ngClick="Submit"  value="Update" class="btn btn-md btn-success form-control">
+            </div>
+        </div>
+
+<ng-form>
+</div>

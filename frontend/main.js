@@ -1,39 +1,56 @@
-var appModule = angular.module('appModule', []);
+var appModule = angular.module('appModule', ['ngCookies']);
 
-appModule.controller('appController', function($scope, $http) {
+appModule.controller('appController', function($scope, $http, $cookieStore) {
 
     $scope.send = function (sort_by) {
-        console.log("inside click");
         var sort;
-        
         $scope.show_table = false;
+
+        // TODO: Could probably be optimised
+        if (typeof $cookieStore.get('sort_by') === 'undefined') {
+            if (typeof sort_by !== 'undefined') {
+                //console.log("Setting cookie")
+                $cookieStore.put('sort_by', sort_by);
+            }
+        } else {
+            if (typeof sort_by === 'undefined') {
+                sort_by = $cookieStore.get('sort_by');
+                //console.log("Getting sort_by: " + sort_by);
+            } else {
+                $cookieStore.put('sort_by', sort_by);
+            }
+        }
+
         (typeof sort_by === 'undefined') ? sort = {} : sort = {"sort_by": sort_by};
-        console.log(sort)
         var posting = $http({
             method: 'POST',
             url: 'http://localhost:3000/api/bikes/',
             data: sort,
             withCredentials: false,
             processData: false
-        })
+        });
         posting.success(function (response) {
             console.log(response);
+            
+            console.log($cookieStore.get('sort_by'))
             $scope.show_table = true;
             $scope.bikes_data = response.bikes;
         });
     }
-    $scope.submitForm = function () {
-        //$scope.bikes_data = {};
+    $scope.submitForm = function (action, dt) {
+        console.log("In submitForm")
         $scope.add_result = {};
-        var user_obj = normaliseInput($scope.data),
+        (typeof action === 'undefined') ? action = 'add' : {};
+        (typeof dt === 'undefined') ? dt = $scope.data : {};
+        var user_obj = normaliseInput(dt),
             result_box = angular.element( document.querySelector( '#result_box' ) );
         var posting = $http({
             method: 'POST',
-            url: 'http://localhost:3000/api/bikes/add/',
+            url: 'http://localhost:3000/api/bikes/'+action+'/',
             data: user_obj,
             withCredentials: false,
             processData: false
-        })
+        });
         posting.success(function (response) {
             if (typeof response.errors !== "undefined") {
                 $scope.add_result = response.message;
@@ -41,19 +58,19 @@ appModule.controller('appController', function($scope, $http) {
             } else {
                 $scope.add_result = "Saved bike: "+response.bike.name;
                 result_box.addClass('alert alert-success');
-                $scope.$parent.send();
+                try {
+                    $scope.$parent.send();
+                } catch (err) {
+                    $scope.send();
+                }
             }
         });
         posting.error(function(err, response){
             $scope.add_result = err.message;
             result_box.addClass('alert alert-danger');
-        })
+        });
     };
-
-
 });
-
-
 
 /*
  * Flattens input so it matches with what the API is expecting.

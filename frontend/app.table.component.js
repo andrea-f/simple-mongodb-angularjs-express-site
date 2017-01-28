@@ -11,7 +11,13 @@ return {
 	controller:function($scope,$http){
 		$scope.sendToParent = function(sort_by) {
 			$scope.$parent.send(sort_by);
-		}
+		};
+		$scope.submitParentForm = function(data) {
+				console.log("Modified data:  ")
+				console.log(data)
+				$scope.$parent.submitForm('update', data);
+		};
+
 		$scope.delete = function(id){
 			console.log("submitted id: "+id)
 
@@ -32,7 +38,6 @@ return {
 					}
 			});
 			posting.error(function(err, response){
-					console.log("ciao")
 					$scope.add_result = "eee: "+err.message;
 			})
 
