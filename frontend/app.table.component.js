@@ -20,7 +20,7 @@ return {
 
 		$scope.delete = function(id){
 			console.log("submitted id: "+id)
-
+			result_box = angular.element( document.querySelector( '#result_box' ) );
 			var posting = $http({
 					method: 'POST',
 					url: 'http://localhost:3000/api/bikes/delete/',
@@ -30,9 +30,10 @@ return {
 			})
 			posting.success(function (response) {
 					if (typeof response.errors !== "undefined") {
-					    $scope.add_result = response.message;
+					    result_box.html( response.message );
 					} else {
-					    $scope.$parent.add_result = "deleted bike: "+response;
+					    result_box.html(response.response);
+					    result_box.addClass('alert alert-danger');
 					    console.log(response);
 					    $scope.$parent.send();
 					}

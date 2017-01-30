@@ -19,6 +19,7 @@
             
             <button type="submit" ng-click="send()" style="display: infline;" class="btn btn-lg btn-success">Get bikes</button>
             <button type="submit" ng-click="show = !show" style="display: infline;" class="btn btn-lg btn-info">Add bike</button>
+            <pre id="result_box" ng-controller='appController' style="margin-top: 2%; display:block;">{{add_result}}</pre>
             <div ng-show="show" style="display: block; text-align: center;">
                 <form ng-controller='appController' ng-submit="submitForm()"  class="form-group" style="padding: 2%;">
                         <div class="form-group row">
@@ -49,8 +50,9 @@
                             <div class="col-sm-2">
                             <input type="submit" ngClick="Submit"  value="Add" class="btn btn-md btn-success form-control">
                             </div>
-                            <pre id="result_box">{{add_result}}</pre>
+                           
                         </div>
+
                 <ng-form>
 
             </div>

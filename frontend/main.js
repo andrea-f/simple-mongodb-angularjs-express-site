@@ -9,18 +9,16 @@ appModule.controller('appController', function($scope, $http, $cookieStore) {
         // TODO: Could probably be optimised
         if (typeof $cookieStore.get('sort_by') === 'undefined') {
             if (typeof sort_by !== 'undefined') {
-                //console.log("Setting cookie")
                 $cookieStore.put('sort_by', sort_by);
             }
         } else {
             if (typeof sort_by === 'undefined') {
                 sort_by = $cookieStore.get('sort_by');
-                //console.log("Getting sort_by: " + sort_by);
             } else {
                 $cookieStore.put('sort_by', sort_by);
             }
         }
-
+        // Do POST request for bikes 
         (typeof sort_by === 'undefined') ? sort = {} : sort = {"sort_by": sort_by};
         var posting = $http({
             method: 'POST',
@@ -30,16 +28,15 @@ appModule.controller('appController', function($scope, $http, $cookieStore) {
             processData: false
         });
         posting.success(function (response) {
-            console.log(response);
-            
-            console.log($cookieStore.get('sort_by'))
             $scope.show_table = true;
             $scope.bikes_data = response.bikes;
         });
     }
+    $scope.add_result = "Bikes operations";
+
     $scope.submitForm = function (action, dt) {
-        console.log("In submitForm")
-        $scope.add_result = {};
+        console.log("In submitForm");
+        
         (typeof action === 'undefined') ? action = 'add' : {};
         (typeof dt === 'undefined') ? dt = $scope.data : {};
         var user_obj = normaliseInput(dt),
@@ -56,7 +53,8 @@ appModule.controller('appController', function($scope, $http, $cookieStore) {
                 $scope.add_result = response.message;
                 result_box.addClass('alert alert-danger');
             } else {
-                $scope.add_result = "Saved bike: "+response.bike.name;
+                result_box.html( "Saved bike: "+response.bike.name);
+
                 result_box.addClass('alert alert-success');
                 try {
                     $scope.$parent.send();
