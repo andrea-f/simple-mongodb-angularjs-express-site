@@ -14,7 +14,11 @@ require("./js/data/database.js");
 var mongoose = require('mongoose');
 ObjectID = require('mongodb').ObjectID;
 Bike = mongoose.model('bike');
-mongoose.connect('mongodb://localhost:27017/bikes');
+try {
+  mongoose.connect('mongodb://localhost:27017/bikes');
+} catch (err) {
+  mongoose.connect('mongodb://db/bikes');
+}
 
 //app.use(logger('dev'));
 app.use(bodyParser.json());
