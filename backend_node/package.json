@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon --watch ./js ./js/bin/www",
-    "test": "./node_modules/.bin/mocha --reporter spec ./test/api"
+    "test": "./node_modules/.bin/mocha --reporter spec ./test/api.test"
   },
   "repository": {
     "type": "git",
@@ -35,5 +35,10 @@
     "passport-local": "^1.0.0",
     "sinon": "^1.17.7",
     "sinon-bluebird": "^3.1.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "mocha": "^3.2.0"
   }
 }

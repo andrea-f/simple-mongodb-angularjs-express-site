@@ -29,9 +29,7 @@ router.post('/bikes', isLoggedIn, function(req, res, next) {
  */
 router.post('/bikes/populate/', isLoggedIn, function(req, res, next) {
 	var json_file = JSON.parse(fs.readFileSync('/Users/afassina/Workspace/private/bto/andrea-f/backend_node/js/data/bikes.json', 'utf8'));
-	console.log(json_file)
 	Bike.insertMany(json_file.items).then(function(err, bikes){
-		console.log(err, bikes)
 		if (err) res.json(err);
 		res.json({
 			bikes: bikes
@@ -48,12 +46,10 @@ router.post('/bikes/get/', isLoggedIn, function(req, res, next) {
 	Bike.findOne({_id: bike_id}, function (err, bike) {
 		if(!err) {
 			if (bike) {
-				console.log("returning bike: " + bike.name);
 				res.json({
 					bike: bike
 				});
 			} else {
-				console.log("Bike with id: " + bike_id + " not found!");
 				res.json({
 					error: "Bike with id: " + bike_id + " not found!"
 				});
@@ -92,12 +88,10 @@ router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
 router.post('/bikes/delete/', isLoggedIn, function(req, res, next) {
 	Bike.findByIdAndRemove(req.body.id, function(err, resp) {
 		if (resp) {
-			console.log("Removed bike: "+ resp.name)
 			res.json({
 				response: "Removed bike with name: " + resp.name
 			});
 		} else {
-			console.log("No such bike: " + req.body.id)
 			res.json({
 				response: "No such bike: " + req.body.id
 			});
@@ -133,12 +127,10 @@ function updateBike(req, res) {
 			res.json(err);
 		} else {
 			if (bike) {
-				console.log("Updated bike: "+ bike.name);
 				res.json({
 					bike: bike
 				});
 			} else {
-				console.log("No such bike to update: " + bike_id)
 				res.json({
 					response: "No such bike to update: " + bike_id
 				});
@@ -151,29 +143,32 @@ function updateBike(req, res) {
  * Performs the actual save operation in db
  */
 function saveBike(req, res){
-	var opts = { runValidators: true };
+	var opts = { runValidators: true },
+		bike_class;
+	(Object.prototype.toString.call(req.body.class) === "[object Array]")
+	? bike_class = req.body.class
+	: bike_class =req.body.class.split(',');
+
 	Bike.findOne({name: req.body.name}, opts, function (err, bike) {
 		if(!err) {
 			new Bike({
 				name         : req.body.name, 
 				description  : req.body.description, 
-				class        : req.body.class.split(','),
+				class        : bike_class,
 				image        : req.body.image//function(){return encode_image(req.body.image.thumb);}
 			})
 			.save(function(err, bike) {
-				//console.log(err,bike)
 				if (err) {
 					res.status = 500;
 					res.json(err);
 				} else {
-					//console.log(bike)
 					res.json({
 						bike: bike
 					});
 				}
 			});
 		} else {
-			console.log(err)
+			//console.log(err)
 			res.status = 500;
 			res.json({
 				"errors": err
@@ -189,9 +184,6 @@ function saveBike(req, res){
  */
 var pretty_awesome_api_keys = ['123345677889']
 function isLoggedIn(req, res, next) {
-	for (var key in req) {
-		console.log(key)
-	}
 	var origin_noport = "",
 		host_noport = "";
 	try {

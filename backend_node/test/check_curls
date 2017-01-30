@@ -32,9 +32,13 @@ curl -X POST -i --header "Content-Type: application/json" --header "Accept: appl
 curl -X POST -i --header "Content-Type: application/json" --header "Accept: application/json" --data '{"bikeId": "588775d816079afe9c85698e"}' http://0.0.0.0:3000/api/bikes/get/
 
 // SHOULD FAIL
-// GET ALL BIKES
+// GET ALL BIKES WITHOUT TOKEN
 curl -X POST -i --header "Content-Type: application/json" --header "Accept: application/json" http://0.0.0.0:3000/api/bikes/
 
 // SHOULD PASS
-// GET ALL BIKES
+// GET ALL BIKES WITH TOKEN
 curl -X POST -i --header "Content-Type: application/json" --header "Accept: application/json" --data '{"api_key": "123345677889"}' http://0.0.0.0:3000/api/bikes/
+
+// SHOULD PASS
+// ADD BIKES FROM JSON
+curl -X POST -i --header "Content-Type: application/json" --header "Accept: application/json" --data '{"api_key": "123345677889"}' http://0.0.0.0:3000/api/bikes/populate/
