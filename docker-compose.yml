@@ -2,8 +2,7 @@ db:
   image: mongo
   command: mongod
 backend:
-  build: .
-  dockerfile: ./backend_node/Dockerfile
+  image: backend_image
   volumes:
     - .:/backend_node
   ports:
@@ -12,8 +11,7 @@ backend:
   links:
     - db
 frontend:
-  build: .
-  dockerfile: ./frontend/Dockerfile
+  image: frontend_image
   volumes:
     - .:/frontend
   ports:
