@@ -1,0 +1,20 @@
+db:
+  image: mongo
+  command: mongod
+backend:
+  image: backend_image
+  volumes:
+    - .:/backend_node
+  ports:
+    - "3000:3000"
+    - "27017:27017"
+  links:
+    - db
+frontend:
+  image: frontend_image
+  volumes:
+    - .:/frontend
+  ports:
+    - "80:80"
+  links:
+    - backend
