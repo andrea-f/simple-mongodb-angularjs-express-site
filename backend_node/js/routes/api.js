@@ -1,25 +1,38 @@
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
+var Jimp = require("jimp");
+
 /*
  * Get all bikes 
  */
 router.post('/bikes', isLoggedIn, function(req, res, next) {
 	var sort_by;
- 
-		switch(req.body.sort_by) {
-			case "description":
-				sort_by = {description:1} 
-				break;
-			case "name":
-			default:
-				sort_by = {name:1} 
-				break;
-		}
-
-	
-	console.log(sort_by)
+	switch(req.body.sort_by) {
+		case "description":
+			sort_by = {description:1} 
+			break;
+		case "name":
+		default:
+			sort_by = {name:1} 
+			break;
+	};
 	Bike.find({}, null, {sort: sort_by}, function(err, bikes){
+		res.json({
+			bikes: bikes
+		});
+	});
+});
+
+/*
+ * Load JSON of bikes 
+ */
+router.post('/bikes/populate/', isLoggedIn, function(req, res, next) {
+	var json_file = JSON.parse(fs.readFileSync('/Users/afassina/Workspace/private/bto/andrea-f/backend_node/js/data/bikes.json', 'utf8'));
+	console.log(json_file)
+	Bike.insertMany(json_file.items).then(function(err, bikes){
+		console.log(err, bikes)
+		if (err) res.json(err);
 		res.json({
 			bikes: bikes
 		});
@@ -54,8 +67,8 @@ router.post('/bikes/get/', isLoggedIn, function(req, res, next) {
  * Add a bike 
  */
 router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
-	var opts = { runValidators: true },
-		count = 0;
+	
+	var count = 0;
 	for (var key in req.body) {
 		count += 1;
 	}
@@ -65,39 +78,11 @@ router.post('/bikes/add/', isLoggedIn, function(req, res, next) {
 			"message":"No input submitted!"
 		});
 	} else {
-		var bike_hash = req.body.name;
-		Bike.findOne({hash: bike_hash}, opts, function (err, bike) {
-			if(!err) {
-				new Bike({
-					name         : req.body.name, 
-					description  : req.body.description, 
-					hash         : bike_hash,
-					class        : req.body.class.split(','),
-					image        : req.body.image//, 
-					//image_base64 : encode_image(req.body.image.large)
-				})
-				.save(function(err, bike) {
-
-					console.log(err)
-					if (err) {
-						res.status = 500;
-						res.json(err);
-					} else {
-						console.log(bike)
-						res.json({
-							bike: bike
-						});
-					}
-				});
-			} else {
-				console.log(err)
-				res.status = 500;
-				res.json({
-					"errors": err
-				});			
-			}
-
-		});
+		if (req.body.image.large === req.body.image.thumb) {
+			return createThumbImage(req, res, "add");
+		} else {
+			return saveBike(req, res);
+		}
 	}
 });
 
@@ -124,22 +109,33 @@ router.post('/bikes/delete/', isLoggedIn, function(req, res, next) {
  * Update a bike 
  */
 router.post('/bikes/update/', isLoggedIn, function(req, res, next) {
-	var bike_id = new ObjectID(req.body.bikeId);
-	var new_name = req.body.name;
-	// TODO:
-	// Check which fields are in post request and are valid, then update
-	// Currently only updates name
-	Bike.findByIdAndUpdate(bike_id, { name: new_name }, { new: true, runValidators: true }, function(err, resp) {
+	if (req.body.image.large === req.body.image.thumb) {
+		return createThumbImage(req, res, "update");
+	} else {
+		return updateBike(req, res);
+	}
+
+});
+
+/*
+ * Performs the actual update operation in db
+ */
+function updateBike(req, res) {
+	var bike_id = new ObjectID(req.body.id);
+	delete req.body['id'];
+	var update_object = req.body;
+	if ((typeof update_object['class'] !== 'undefined') && (Object.prototype.toString.call(update_object['class']) ) !== "[object Array]") {
+		update_object['class'] = update_object['class'].split(',');
+	};
+	Bike.findByIdAndUpdate(bike_id, update_object, { new: true, runValidators: true }, function(err, bike) {
 		if (err) {
 			res.status = 500;
-			res.json({
-				error: "Error in updating bike id: " + bike_id
-			});
+			res.json(err);
 		} else {
-			if (resp) {
-				console.log("Updated bike: "+ resp.name);
+			if (bike) {
+				console.log("Updated bike: "+ bike.name);
 				res.json({
-					response: "Updated bike with id: " + resp.name
+					bike: bike
 				});
 			} else {
 				console.log("No such bike to update: " + bike_id)
@@ -149,16 +145,108 @@ router.post('/bikes/update/', isLoggedIn, function(req, res, next) {
 			}
 		}
 	});	
-});
+}
 
-// TODO: Add authentication
+/*
+ * Performs the actual save operation in db
+ */
+function saveBike(req, res){
+	var opts = { runValidators: true };
+	Bike.findOne({name: req.body.name}, opts, function (err, bike) {
+		if(!err) {
+			new Bike({
+				name         : req.body.name, 
+				description  : req.body.description, 
+				class        : req.body.class.split(','),
+				image        : req.body.image//function(){return encode_image(req.body.image.thumb);}
+			})
+			.save(function(err, bike) {
+				//console.log(err,bike)
+				if (err) {
+					res.status = 500;
+					res.json(err);
+				} else {
+					//console.log(bike)
+					res.json({
+						bike: bike
+					});
+				}
+			});
+		} else {
+			console.log(err)
+			res.status = 500;
+			res.json({
+				"errors": err
+			});			
+		}
+
+	});
+}
+
+/*
+ * Perform token based authentication:
+ * if request is from same host, then skip header auth, otherwise check
+ */
+var pretty_awesome_api_keys = ['123345677889']
 function isLoggedIn(req, res, next) {
-	return next();
+	for (var key in req) {
+		console.log(key)
+	}
+	var origin_noport = "",
+		host_noport = "";
+	try {
+		var host = req.get('host'),
+		localhost = req.headers.origin;
+		host_noport = host.split(':')[0]
+		origin_noport = localhost.split(':')[1].replace("//","")
+		browser_request = true;
+	} catch (err) {
+		browser_request = false;
+	}
+	if ((host_noport === origin_noport) && (browser_request)) {
+		return next();
+	} else {
+		if ((!req.body.api_key) || (pretty_awesome_api_keys.indexOf(req.body.api_key) === -1)) {
+			res.json({
+				"errors": {},
+				"message": "Not authorized!"
+			});	
+		} else{
+			return next()
+		}
+	}
+	
 }
 
-function encode_image(url) {
-    var image = fs.readFileSync(url);
-    return new Buffer(image).toString('base64');
+/*
+ * Creates thumbnail image before updating or saving.
+ */
+function createThumbImage(req, res, type) {
+	// Create thumbnail image from input url.
+	return Jimp.read(req.body.image.thumb, function (err, newimg) {
+	    if (err) saveBike(req, res);
+	    var mime = "image/png";
+	    return newimg.resize(256, 256)           
+	         .quality(60)                 
+	         .getBase64( mime, function(err, img){
+	         	if (!err) {req.body.image.thumb = img;}
+	         	switch (type){
+	         		case "add":
+	         			// Save bike to db
+	         			saveBike(req, res);
+	         			break;
+	         		case "update":
+	         			// Update bike
+	         			updateBike(req, res);
+	         			break;
+	         	}
+	         	
+	         	
+	         })
+		});
 }
+
+
+
 
 module.exports = router;

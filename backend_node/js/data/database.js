@@ -32,11 +32,7 @@ var Bike = new Schema({
             type: String,
             required: true,
             validate: {
-                validator: function(v) {
-                    // Add better checking here
-                    ( (Object.prototype.toString.call(v) === "[object String]") && (v.length > 0) ) ? isValid = true : isValid = false;
-                    return isValid;
-                },
+                validator: function(v) { return checkImageURL(v)},
                 message: '{VALUE} is not a valid thumb image!'
             }
         },
@@ -44,11 +40,7 @@ var Bike = new Schema({
             type: String,
             required: true,
             validate: {
-                validator: function(v) {
-                    // Add better checking here
-                    ( (Object.prototype.toString.call(v) === "[object String]") && (v.length > 0) ) ? isValid = true : isValid = false;
-                    return isValid;
-                },
+                validator: function(v) { return checkImageURL(v)},
                 message: '{VALUE} is not a valid large image!'
             }
         }
@@ -90,6 +82,20 @@ User.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
 };
 
+function checkImageURL(v) {                
+    ( (Object.prototype.toString.call(v) === "[object String]") && (v.length > 0) ) ? isValid = true : isValid = false;
+    if (isValid) {
+        var image_identifiers = ["jpeg","jpg", "http","png","gif"],
+        c = 0;
+        image_identifiers.forEach(function(ident) {
+            (v.indexOf(ident) !== -1)
+            ? c++
+            : "";
+        });
+        !(c >= 1) ? isValid = false : "";
+    }
+    return isValid;
+}
 
 module.exports = {
 	"bike": mongoose.model('bike', Bike)

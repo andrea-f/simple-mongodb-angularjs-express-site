@@ -16,34 +16,6 @@ ObjectID = require('mongodb').ObjectID;
 Bike = mongoose.model('bike');
 mongoose.connect('mongodb://localhost:27017/bikes');
 
-/*
-var MongoStore = require('connect-mongo')(session);
-User = mongoose.model('user');
-//mongoose.connect(configDB.url); // connect to our database
-app.use(session({
-    secret: 'myawesomepassportlocalauth', // session secret
-    resave: true,
-    saveUninitialized: true,
-    store: new MongoStore({ 
-      mongooseConnection: mongoose.connection, 
-      ttl: 14 * 24 * 60 * 60  
-    }), 
-    cookie: { secure: false, httpOnly: false },
-    name: "bikes"
-}));
-
-app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
-app.use(flash()); // use connect-flash for flash messages stored in session
-require('./js/data/passport')(passport);
-
-var session = require('express-session');
-var passport = require('passport');
-var flash    = require('connect-flash');
-*/
-
-
-
 //app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
