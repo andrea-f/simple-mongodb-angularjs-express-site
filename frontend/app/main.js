@@ -1,11 +1,9 @@
 var appModule = angular.module('appModule', ['ngCookies']);
 
 appModule.controller('appController', function($scope, $http, $cookieStore) {
-
+    $scope.show_table = false;
     $scope.send = function (sort_by) {
         var sort;
-        $scope.show_table = false;
-
         // TODO: Could probably be optimised
         if (typeof $cookieStore.get('sort_by') === 'undefined') {
             if (typeof sort_by !== 'undefined') {
@@ -35,7 +33,7 @@ appModule.controller('appController', function($scope, $http, $cookieStore) {
     $scope.add_result = "Bikes operations";
 
     $scope.submitForm = function (action, dt) {
-        console.log("In submitForm");
+        //console.log("In submitForm");
         
         (typeof action === 'undefined') ? action = 'add' : {};
         (typeof dt === 'undefined') ? dt = $scope.data : {};
