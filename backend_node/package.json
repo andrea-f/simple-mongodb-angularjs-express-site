@@ -1,0 +1,44 @@
+{
+  "name": "andrea-f",
+  "version": "1.0.0",
+  "description": "A simple bike storage project",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon --watch ./js ./js/bin/www",
+    "test": "./node_modules/.bin/mocha --reporter spec ./test/api.test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ButoVideo/andrea-f.git"
+  },
+  "author": "Andrea Fassina <andrea@vividq.com> (http://www.walkabout.xyz/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ButoVideo/andrea-f/issues"
+  },
+  "homepage": "https://github.com/ButoVideo/andrea-f",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.16.0",
+    "chai": "^3.5.0",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^1.3.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
+    "express-session": "^1.15.0",
+    "jimp": "^0.2.27",
+    "mocha": "^3.2.0",
+    "mongoose": "^4.7.8",
+    "morgan": "^1.7.0",
+    "nodemon": "^1.11.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "sinon": "^1.17.7",
+    "sinon-bluebird": "^3.1.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "mocha": "^3.2.0"
+  }
+}

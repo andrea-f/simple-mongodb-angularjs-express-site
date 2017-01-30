@@ -1,0 +1,10 @@
+{
+	"id": 1,
+	"name": "Litening C:68",
+	"description": "The bike for the professionals - thanks to our high-end C:68 Carbon frame and race optimized geometry.",
+	"image": {
+		"thumb": "https://buto-files.s3.amazonaws.com/interview-task/images/litening-c68-thumb.jpg",
+		"large": "https://buto-files.s3.amazonaws.com/interview-task/images/litening-c68.jpg"
+	},
+	"class": ["endurance", "race"]
+}
