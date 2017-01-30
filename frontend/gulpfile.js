@@ -7,7 +7,8 @@ var gulp = require('gulp'),
     changed = require('gulp-changed'),
     minifyHTML = require('gulp-minify-html'),
     replace = require('gulp-replace'),
-    clean = require('gulp-clean');
+    clean = require('gulp-clean'),
+    ngAnnotate = require('gulp-ng-annotate');
 
 gulp.task('minify-views-html', function() {
 	var opts = {empty:true, quotes:true};
@@ -34,12 +35,12 @@ gulp.task('minify-index-html', function() {
 gulp.task('bundle-js', function() {
 	var jsPath = {jsSrc:['./app/*.js'], jsDest:'./dist'};
 	gulp.src(jsPath.jsSrc)
-	    .pipe(concat('app.js'))
+	    .pipe(concat('App.js'))
 	    .pipe(replace('http://localhost:3000/api/bikes/', 'http://backend:3000/api/bikes/'))
-	    .pipe(stripDebug())
+	    //.pipe(stripDebug())
 	    .pipe(ngAnnotate())
-	    .pipe(uglify())
-	    .pipe(rename({ suffix: '.min' }))
+	    //.pipe(uglify())
+	    //.pipe(rename({ suffix: '.min' }))
 	    .pipe(gulp.dest(jsPath.jsDest));
 });
 
